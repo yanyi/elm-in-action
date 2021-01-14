@@ -23,6 +23,7 @@ type Msg
     = ClickedPhoto String
     | ClickedSize ThumbnailSize
     | ClickedSurpriseMe
+    | GotSelectedIndex Int
 
 
 view : Model -> Html Msg
@@ -123,22 +124,36 @@ randomPhotoPicker =
     Random.int 0 (Array.length photoArray - 1)
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ClickedPhoto url ->
-            { model | selectedUrl = url }
+            ( { model | selectedUrl = url }, Cmd.none )
 
         ClickedSize size ->
-            { model | chosenSize = size }
+            ( { model | chosenSize = size }, Cmd.none )
 
         ClickedSurpriseMe ->
-            { model | selectedUrl = "2.jpeg" }
+            ( model, Random.generate GotSelectedIndex randomPhotoPicker )
+
+        GotSelectedIndex index ->
+            ( { model | selectedUrl = getPhotoUrl index }, Cmd.none )
 
 
+
+{- The type `Program () Model Msg` indicates an Elm `Program` that has no `flags`, whose model type is `Model` and
+   whose message type is `Msg`.
+-}
+
+
+main : Program () Model Msg
 main =
-    Browser.sandbox
-        { init = initialModel
+    Browser.element
+        {- First element in tuple is initial `Model`, and second is
+           command to run when application loads.
+        -}
+        { init = \flags -> ( initialModel, Cmd.none )
         , view = view
         , update = update
+        , subscriptions = \model -> Sub.none
         }
