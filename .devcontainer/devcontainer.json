@@ -7,7 +7,7 @@
 	},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"Elmtooling.elm-ls-vscode",
+		"elmtooling.elm-ls-vscode",
 		"rubymaniac.vscode-html-to-elm"
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
