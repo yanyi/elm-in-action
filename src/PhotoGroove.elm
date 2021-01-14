@@ -12,6 +12,12 @@ urlPrefix =
     "http://elm-in-action.com/"
 
 
+type ThumbnailSize
+    = Small
+    | Medium
+    | Large
+
+
 type alias Msg =
     { description : String, data : String }
 
@@ -54,6 +60,7 @@ type alias Photo =
 type alias Model =
     { photos : List Photo
     , selectedUrl : String
+    , chosenSize : ThumbnailSize
     }
 
 
@@ -65,6 +72,7 @@ initialModel =
         , { url = "3.jpeg" }
         ]
     , selectedUrl = "1.jpeg"
+    , chosenSize = Medium
     }
 
 
