@@ -21,9 +21,9 @@ type ThumbnailSize
 
 type Msg
     = ClickedPhoto String
-    | ClickedSize ThumbnailSize
+    | ClickedSize ThumbnailSize -- A container that holds a `ThumbnailSize` value.
     | ClickedSurpriseMe
-    | GotSelectedIndex Int
+    | GotSelectedIndex Int -- A container that holds an `Int` value.
 
 
 view : Model -> Html Msg
