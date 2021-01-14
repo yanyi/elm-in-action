@@ -1,5 +1,6 @@
 module PhotoGroove exposing (main)
 
+import Array exposing (Array)
 import Browser
 import Html exposing (div, h1, img, text)
 import Html.Attributes exposing (..)
@@ -46,6 +47,11 @@ initialModel =
         ]
     , selectedUrl = "1.jpeg"
     }
+
+
+photoArray : Array { url : String }
+photoArray =
+    Array.fromList initialModel.photos
 
 
 update msg model =
