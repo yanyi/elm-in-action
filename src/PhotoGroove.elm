@@ -5,6 +5,7 @@ import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Http
 import Random
 
 
@@ -24,6 +25,7 @@ type Msg
     | ClickedSize ThumbnailSize -- A container that holds a `ThumbnailSize` value.
     | ClickedSurpriseMe
     | GotRandomPhoto Photo
+    | GotPhotos (Result Http.Error String)
 
 
 view : Model -> Html Msg
@@ -151,6 +153,24 @@ update msg model =
         GotRandomPhoto photo ->
             ( { model | status = selectUrl photo.url model.status }, Cmd.none )
 
+        GotPhotos (Ok responseStr) ->
+            case String.split "," responseStr of
+                {- Give the name `urls` to this `List` while also subdividing into its first element `firstUrl`
+                   -and the remaining elements with the `_` placeholder.
+                -}
+                (firstUrl :: _) as urls ->
+                    let
+                        photos =
+                            List.map Photo urls
+                    in
+                    ( { model | status = Loaded photos firstUrl }, Cmd.none )
+
+                [] ->
+                    ( { model | status = Errored "0 photos found" }, Cmd.none )
+
+        GotPhotos (Err httpError) ->
+            ( { model | status = Errored "Server error!" }, Cmd.none )
+
 
 selectUrl : String -> Status -> Status
 selectUrl url status =
@@ -165,6 +185,14 @@ selectUrl url status =
             status
 
 
+initialCmd : Cmd Msg
+initialCmd =
+    Http.get
+        { url = "http://elm-in-action.com/photos/list"
+        , expect = Http.expectString GotPhotos
+        }
+
+
 
 {- The type `Program () Model Msg` indicates an Elm `Program` that has no `flags`, whose model type is `Model` and
    whose message type is `Msg`.
@@ -177,8 +205,8 @@ main =
         {- First element in tuple is initial `Model`, and second is
            command to run when application loads.
         -}
-        { init = \flags -> ( initialModel, Cmd.none )
+        { init = \_ -> ( initialModel, initialCmd )
         , view = view
         , update = update
-        , subscriptions = \model -> Sub.none
+        , subscriptions = \_ -> Sub.none
         }
