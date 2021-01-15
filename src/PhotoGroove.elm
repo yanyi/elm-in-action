@@ -132,10 +132,9 @@ update msg model =
                    This branch represents when we got at least one photo.
                 -}
                 Loaded (firstPhoto :: otherPhotos) _ ->
-                    ( model
-                    , Random.generate GotRandomPhoto
-                        (Random.uniform firstPhoto otherPhotos)
-                    )
+                    Random.uniform firstPhoto otherPhotos
+                        |> Random.generate GotRandomPhoto
+                        |> Tuple.pair model
 
                 {- This branch matches when we have an empty list. Elm will cry out loud if you forgot to handle this
                    branch
