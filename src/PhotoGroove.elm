@@ -51,6 +51,8 @@ viewFilter name magnitude =
         [ label [] [ text name ]
         , rangeSlider
             [ Attr.max "11"
+
+            -- Elm applies special handling to the `value` property. So we name it `val` instead.
             , Attr.property "val" (Encode.int magnitude)
             ]
             []
