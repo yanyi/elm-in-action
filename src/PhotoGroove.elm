@@ -71,6 +71,18 @@ viewLoaded photos selectedUrl model =
         [ onClick ClickedSurpriseMe ]
         [ text "Surprise Me!" ]
     , div [ class "filters" ]
+        {- `viewFilter` takes in an `(Int -> Msg)` as first parameter. Why can we just pass `SlidX`?
+           Remember that when we create a type variant, it comes automatically with a function that returns our `Msg`
+           type.
+
+           This then allows us to pass that `(Int -> Msg)` type down to our `onSlide` function which uses type variable
+           `msg` to return an `Attribute msg`. So in a sense, passing down `(Int -> Msg)`, our `onSlide` function will
+           return actually a `Attribute Msg`.
+
+           When we slide one of these, JavaScript gets triggered --> our `onSlide` function listens for the "slide"
+           event --> internally converts the slider integer value into the `Msg` passed in --> our view dispatches the
+           message to our `update` function --> `update` function updates the model and the view gets reflected with it.
+        -}
         [ viewFilter SlidHue "Hue" model.hue
         , viewFilter SlidRipple "Ripple" model.ripple
         , viewFilter SlidNoise "Noise" model.noise
