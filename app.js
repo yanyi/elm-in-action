@@ -6296,7 +6296,7 @@ var $author$project$PhotoGroove$Loaded = F2(
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $elm$json$Json$Encode$int = _Json_wrap;
+var $elm$json$Json$Encode$float = _Json_wrap;
 var $elm$json$Json$Encode$list = F2(
 	function (func, entries) {
 		return _Json_wrap(
@@ -6335,7 +6335,7 @@ var $author$project$PhotoGroove$setFilters = _Platform_outgoingPort(
 									[
 										_Utils_Tuple2(
 										'amount',
-										$elm$json$Json$Encode$int($.amount)),
+										$elm$json$Json$Encode$float($.amount)),
 										_Utils_Tuple2(
 										'name',
 										$elm$json$Json$Encode$string($.name))
@@ -6356,9 +6356,9 @@ var $author$project$PhotoGroove$applyFilters = function (model) {
 			var url = $author$project$PhotoGroove$urlPrefix + ('large/' + selectedUrl);
 			var filters = _List_fromArray(
 				[
-					{amount: model.hue, name: 'Hue'},
-					{amount: model.ripple, name: 'Ripple'},
-					{amount: model.noise, name: 'Noise'}
+					{amount: model.hue / 11, name: 'Hue'},
+					{amount: model.ripple / 11, name: 'Ripple'},
+					{amount: model.noise / 11, name: 'Noise'}
 				]);
 			return _Utils_Tuple2(
 				model,
@@ -6738,6 +6738,7 @@ var $author$project$PhotoGroove$sizeToString = function (size) {
 			return 'large';
 	}
 };
+var $elm$json$Json$Encode$int = _Json_wrap;
 var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
 var $elm$json$Json$Decode$at = F2(
