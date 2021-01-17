@@ -6662,25 +6662,22 @@ var $author$project$PhotoGroove$update = F2(
 				}
 			case 'SlidHue':
 				var hue = msg.a;
-				return _Utils_Tuple2(
+				return $author$project$PhotoGroove$applyFilters(
 					_Utils_update(
 						model,
-						{hue: hue}),
-					$elm$core$Platform$Cmd$none);
+						{hue: hue}));
 			case 'SlidRipple':
 				var ripple = msg.a;
-				return _Utils_Tuple2(
+				return $author$project$PhotoGroove$applyFilters(
 					_Utils_update(
 						model,
-						{ripple: ripple}),
-					$elm$core$Platform$Cmd$none);
+						{ripple: ripple}));
 			default:
 				var noise = msg.a;
-				return _Utils_Tuple2(
+				return $author$project$PhotoGroove$applyFilters(
 					_Utils_update(
 						model,
-						{noise: noise}),
-					$elm$core$Platform$Cmd$none);
+						{noise: noise}));
 		}
 	});
 var $elm$html$Html$Attributes$stringProperty = F2(
