@@ -327,17 +327,29 @@ initialCmd =
 -}
 
 
-main : Program () Model Msg
+main : Program Float Model Msg
 main =
     Browser.element
-        {- First element in tuple is initial `Model`, and second is
-           command to run when application loads.
-        -}
-        { init = \_ -> ( initialModel, initialCmd )
+        { init = init
         , view = view
         , update = update
         , subscriptions = subscriptions
         }
+
+
+
+{- First element in tuple is initial `Model`, and second is
+   command to run when application loads.
+-}
+
+
+init : Float -> ( Model, Cmd Msg )
+init flags =
+    let
+        activity =
+            "Initializing Pasta v" ++ String.fromFloat flags
+    in
+    ( { initialModel | activity = activity }, initialCmd )
 
 
 
