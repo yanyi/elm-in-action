@@ -1,4 +1,4 @@
-module PhotoGroove exposing (main)
+port module PhotoGroove exposing (main)
 
 import Array exposing (Array)
 import Browser
@@ -134,6 +134,27 @@ sizeToString size =
 
         Large ->
             "large"
+
+
+
+{- We don't need to implement this function. The `port` keyword  will look at the type we requested and decide what the
+   function will do. In our case, we send `FilterOptions` value that we pass to this.
+
+   - The `port` keyword must be followed by a function name and type annotation.
+   - The type annotation must be for a function that takes one argument.
+   - The function must return `Cmd msg`, and nothing else. Not even `Cmd Msg` (our custom type).
+
+   Since `Cmd msg` is like what `Cmd.none` returns, we actually won't get a message back.
+-}
+
+
+port setFilters : FilterOptions -> Cmd msg
+
+
+type alias FilterOptions =
+    { url : String
+    , filter : List { name : String, amount : Int }
+    }
 
 
 type alias Photo =
