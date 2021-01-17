@@ -28,6 +28,7 @@ type Msg
     | ClickedSize ThumbnailSize -- A container that holds a `ThumbnailSize` value.
     | ClickedSurpriseMe
     | GotRandomPhoto Photo
+    | GotActivity String
     | GotPhotos (Result Http.Error (List Photo))
     | SlidHue Int
     | SlidRipple Int
@@ -70,6 +71,7 @@ viewLoaded photos selectedUrl model =
     , button
         [ onClick ClickedSurpriseMe ]
         [ text "Surprise Me!" ]
+    , div [ class "activity" ] [ text model.activity ]
     , div [ class "filters" ]
         {- `viewFilter` takes in an `(Int -> Msg)` as first parameter. Why can we just pass `SlidX`?
            Remember that when we create a type variant, it comes automatically with a function that returns our `Msg`
@@ -147,6 +149,18 @@ sizeToString size =
 port setFilters : FilterOptions -> Cmd msg
 
 
+
+{- In our initial ports where we return a `Cmd msg` whereby it does not send any message, here, we actually type `msg`
+   to the type of message returned by the `(String -> msg)` function.
+
+   If we use `GotActivity String` in our `Msg` type, it is a `(String -> Msg)`, which will return us a `Sub Msg`
+   (notice the capital letter of `Msg`, it's not a type variable but _our_ type).
+-}
+
+
+port activityChanges : (String -> msg) -> Sub msg
+
+
 type alias FilterOptions =
     { url : String
     , filters : List { name : String, amount : Float }
@@ -177,6 +191,7 @@ type Status
 
 type alias Model =
     { status : Status
+    , activity : String
     , chosenSize : ThumbnailSize
     , hue : Int
     , ripple : Int
@@ -187,6 +202,7 @@ type alias Model =
 initialModel : Model
 initialModel =
     { status = Loading
+    , activity = ""
     , chosenSize = Medium
     , hue = 5
     , ripple = 5
@@ -227,6 +243,9 @@ update msg model =
 
         GotRandomPhoto photo ->
             applyFilters { model | status = selectUrl photo.url model.status }
+
+        GotActivity activity ->
+            ( { model | activity = activity }, Cmd.none )
 
         GotPhotos (Ok photos) ->
             case photos of
@@ -317,8 +336,20 @@ main =
         { init = \_ -> ( initialModel, initialCmd )
         , view = view
         , update = update
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = subscriptions
         }
+
+
+
+{- Whenever our model changes, the new model is passed to this function, giving us a chance to return a different `Sub`
+   depending on what's in the new model. This lets us dynamically control which subscriptions our program pays
+   attention to.
+-}
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    activityChanges GotActivity
 
 
 rangeSlider : List (Attribute msg) -> List (Html msg) -> Html msg
