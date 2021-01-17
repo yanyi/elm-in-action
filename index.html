@@ -43,7 +43,15 @@
         var app = Elm.PhotoGroove.init({ node: document.getElementById("app") });
 
         app.ports.setFilters.subscribe(function (options) {
-            Pasta.apply(document.getElementById("main-canvas"), options);
+            requestAnimationFrame(function () {
+                /* 
+                    The following only runs _after the next time_ `view` results in a DOM update (aka next repaint).
+
+                    Elm Runtime will schedule its next DOM update, we use `requestAnimationFrame` to delay our call
+                    until after our next `view` has added the `<canvas>` we need in the DOM for `Pasta.apply` to work.
+                */
+                Pasta.apply(document.getElementById("main-canvas"), options);
+            });
         });
     </script>
 </body>
