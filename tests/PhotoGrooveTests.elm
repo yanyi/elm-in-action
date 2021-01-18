@@ -13,12 +13,15 @@ import Test exposing (..)
 
 decoderTest : Test
 decoderTest =
-    test "title defaults to (untitled)"
-        (\_ ->
+    test "title defaults to (untitled)" <|
+        \_ ->
             """
                 {"url": "fruits.com", "size": 5}
             """
                 |> decodeString PhotoGroove.photoDecoder
+                {- Test only the `title` field in the Photo record.
+                   `.title` gives us a function that takes a record and returns the contents of its `title` field.
+                -}
+                |> Result.map .title
                 |> Expect.equal
-                    (Ok { url = "fruits.com", size = 5, title = "(untitled)" })
-        )
+                    (Ok "(untitled)")
