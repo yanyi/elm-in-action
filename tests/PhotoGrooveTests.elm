@@ -14,10 +14,10 @@ import Test exposing (..)
 
 decoderTest : Test
 decoderTest =
-    test "title defaults to (untitled)" <|
-        \_ ->
-            [ ( "url", Encode.string "fruits.com" )
-            , ( "size", Encode.int 5 )
+    fuzz2 string int "title defaults to (untitled)" <|
+        \url size ->
+            [ ( "url", Encode.string url )
+            , ( "size", Encode.int size )
             ]
                 |> Encode.object
                 |> decodeValue PhotoGroove.photoDecoder
