@@ -2,7 +2,8 @@ module PhotoGrooveTests exposing (..)
 
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
-import Json.Decode exposing (decodeString)
+import Json.Decode as Decode exposing (decodeValue)
+import Json.Encode as Encode
 import PhotoGroove
 import Test exposing (..)
 
@@ -15,10 +16,11 @@ decoderTest : Test
 decoderTest =
     test "title defaults to (untitled)" <|
         \_ ->
-            """
-                {"url": "fruits.com", "size": 5}
-            """
-                |> decodeString PhotoGroove.photoDecoder
+            [ ( "url", Encode.string "fruits.com" )
+            , ( "size", Encode.int 5 )
+            ]
+                |> Encode.object
+                |> decodeValue PhotoGroove.photoDecoder
                 {- Test only the `title` field in the Photo record.
                    `.title` gives us a function that takes a record and returns the contents of its `title` field.
                 -}
