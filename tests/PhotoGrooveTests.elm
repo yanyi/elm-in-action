@@ -7,6 +7,7 @@ import Json.Decode as Decode exposing (decodeValue)
 import Json.Encode as Encode
 import PhotoGroove exposing (Model, Msg(..), Photo, Status(..), initialModel, update, urlPrefix, view)
 import Test exposing (..)
+import Test.Html.Event as Event
 import Test.Html.Query as Query
 import Test.Html.Selector exposing (attribute, tag, text)
 
@@ -65,14 +66,9 @@ noPhotosNoThumbnails =
 
 thumbnailsWork : Test
 thumbnailsWork =
-    fuzz (Fuzz.intRange 1 5) "URLs render as thumbnails" <|
-        \urlCount ->
+    fuzz urlFuzzer "URLs render as thumbnails" <|
+        \urls ->
             let
-                urls : List String
-                urls =
-                    List.range 1 urlCount
-                        |> List.map (\num -> String.fromInt num ++ ".png")
-
                 thumbnailChecks : List (Query.Single msg -> Expectation)
                 thumbnailChecks =
                     List.map thumbnailRendered urls
@@ -81,6 +77,31 @@ thumbnailsWork =
                 |> view
                 |> Query.fromHtml
                 |> Expect.all thumbnailChecks
+
+
+clickThumbnail : Test
+clickThumbnail =
+    fuzz3 urlFuzzer string urlFuzzer "clicking a thumbnail selects it" <|
+        \urlsBefore urlToSelect urlsAfter ->
+            let
+                url =
+                    urlToSelect ++ ".jpeg"
+
+                -- We set a different extension to be able to test it.
+                photos =
+                    (urlsBefore ++ url :: urlsAfter)
+                        |> List.map photoFromUrl
+
+                srcToClick =
+                    urlPrefix ++ url
+            in
+            { initialModel | status = Loaded photos "" }
+                |> view
+                |> Query.fromHtml
+                |> Query.find [ tag "img", attribute (Attr.src srcToClick) ]
+                |> Event.simulate Event.click
+                -- Expect that this message was sent to `update`.
+                |> Event.expect (ClickedPhoto url)
 
 
 thumbnailRendered : String -> Query.Single msg -> Expectation
@@ -93,3 +114,15 @@ thumbnailRendered url query =
 photoFromUrl : String -> Photo
 photoFromUrl url =
     { url = url, size = 0, title = "" }
+
+
+urlFuzzer : Fuzzer (List String)
+urlFuzzer =
+    Fuzz.intRange 1 5
+        |> Fuzz.map urlsFromCount
+
+
+urlsFromCount : Int -> List String
+urlsFromCount urlCount =
+    List.range 1 urlCount
+        |> List.map (\num -> String.fromInt num ++ ".png")
