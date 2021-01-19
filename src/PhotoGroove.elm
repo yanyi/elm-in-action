@@ -1,4 +1,14 @@
-port module PhotoGroove exposing (main, photoDecoder)
+port module PhotoGroove exposing
+    (  Model
+       -- This `Msg(..)` means to expose not only the `Msg` type itself, but also its variants.
+
+    , Msg(..)
+    , Photo
+    , initialModel
+    , main
+    , photoDecoder
+    , update
+    )
 
 import Array exposing (Array)
 import Browser
