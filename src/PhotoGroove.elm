@@ -4,10 +4,13 @@ port module PhotoGroove exposing
 
     , Msg(..)
     , Photo
+    , Status(..)
     , initialModel
     , main
     , photoDecoder
     , update
+    , urlPrefix
+    , view
     )
 
 import Array exposing (Array)
